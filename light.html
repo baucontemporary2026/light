@@ -10,7 +10,7 @@
             --card-bg: rgba(255, 255, 255, 0.85);
             --text-primary: #1D1D1F;
             --text-secondary: #6E6E73;
-            --border-color: #E5E5EA;
+            --border-color: #D1D1D6;
             --accent-color: #0071E3;
             --accent-hover: #0077ED;
             --danger-color: #FF3B30;
@@ -76,6 +76,7 @@
             gap: 8px;
         }
 
+        /* Bold labels for header inputs */
         .input-group label {
             font-size: 13px;
             font-weight: 700;
@@ -118,23 +119,25 @@
             color: var(--text-primary);
             text-align: left;
             padding: 12px 16px;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--text-primary);
         }
 
         td {
             padding: 12px 8px;
             border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         tr:last-child td {
             border-bottom: none;
         }
 
+        /* Auto-sizing Textarea Styling */
         textarea.input-field {
-            resize: vertical;
+            resize: none;
             min-height: 48px;
-            line-height: 1.4;
+            line-height: 1.5;
+            overflow-y: hidden; /* Hide scrollbars; height adjusts dynamically */
         }
 
         /* Example Row styling */
@@ -200,35 +203,57 @@
             padding: 6px;
             border-radius: 50%;
             transition: color 0.2s;
+            margin-top: 8px;
         }
 
         .btn-icon:hover {
             color: var(--danger-color);
         }
 
-        /* 🖨️ 인쇄 시 적용 스타일 */
+        /* 🖨️ PDF / Print Layout Optimizations */
         @media print {
             body { 
-                background: #FFF; 
-                padding: 0; 
+                background: #FFF !important; 
+                padding: 0 !important; 
+            }
+            .container {
+                max-width: 100% !important;
+                gap: 16px !important;
             }
             .card { 
-                box-shadow: none; 
-                border: none; 
-                padding: 0; 
+                box-shadow: none !important; 
+                border: 1px solid #D1D1D6 !important; 
+                border-radius: 12px !important;
+                padding: 20px !important; 
+                background: #FFF !important;
             }
+            /* Hide non-printable elements */
             .btn-group, .btn-icon, .example-row { 
                 display: none !important; 
             }
+            /* Render input boxes with crisp borders for PDF view */
             .input-field { 
-                border: none; 
-                padding: 4px 0; 
-                background: transparent; 
+                border: 1px solid #C6C6C8 !important; 
+                border-radius: 6px !important;
+                padding: 8px 10px !important; 
+                background: #FFF !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            textarea.input-field {
+                height: auto !important;
+                overflow: visible !important;
             }
             select.input-field {
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 appearance: none;
+            }
+            th {
+                border-bottom: 2px solid #000 !important;
+            }
+            td {
+                border-bottom: 1px solid #E5E5EA !important;
             }
         }
     </style>
@@ -236,7 +261,7 @@
 <body>
 
 <div class="container">
-    <!-- 상단 개요 카드 -->
+    <!-- Header Summary Card -->
     <div class="card">
         <h1 class="header-title">조명 연출 구상안</h1>
         <div class="info-grid">
@@ -259,7 +284,7 @@
         </div>
     </div>
 
-    <!-- 하단 상세 테이블 카드 -->
+    <!-- Table Details Card -->
     <div class="card">
         <div class="table-container">
             <table>
@@ -272,7 +297,7 @@
                     </tr>
                 </thead>
                 <tbody id="lighting-tbody">
-                    <!-- 예시 전용 행 (인쇄 시 자동 숨김) -->
+                    <!-- Example row (Excluded during PDF print) -->
                     <tr class="example-row">
                         <td>
                             <span class="example-badge">예시</span>
@@ -281,10 +306,10 @@
                             </select>
                         </td>
                         <td>
-                            <textarea class="input-field" readonly>(드럼 카운트 후 기타 리프 시작)</textarea>
+                            <textarea class="input-field auto-resize" readonly>(드럼 카운트 후 기타 리프 시작)</textarea>
                         </td>
                         <td>
-                            <textarea class="input-field" readonly>무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
+                            <textarea class="input-field auto-resize" readonly>무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
                         </td>
                         <td style="text-align: center;">
                             <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">인쇄 제외</span>
@@ -296,13 +321,26 @@
 
         <div class="btn-group">
             <button class="btn btn-secondary" onclick="addRow()">+ 섹션 추가</button>
-            <button class="btn btn-primary" onclick="window.print()">PDF / 인쇄하기</button>
+            <button class="btn btn-primary" onclick="prepareAndPrint()">PDF / 인쇄하기</button>
         </div>
     </div>
 </div>
 
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
+
+    // Automatically adjusts textarea height so full text is visible without scrollbars
+    function autoResizeTextarea(element) {
+        element.style.height = 'auto';
+        element.style.height = element.scrollHeight + 'px';
+    }
+
+    // Attach listener to resize textareas on input
+    function attachAutoResize(textarea) {
+        textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+        // Initial sizing delay for rendering
+        setTimeout(() => autoResizeTextarea(textarea), 10);
+    }
 
     function createRow(data = { form: 'Verse 1', lyric: '', memo: '' }) {
         const tr = document.createElement('tr');
@@ -316,21 +354,27 @@
                 <select class="input-field">${options}</select>
             </td>
             <td>
-                <textarea class="input-field" placeholder="가사 또는 파트 특징 입력">${data.lyric}</textarea>
+                <textarea class="input-field auto-resize" placeholder="가사 또는 파트 특징 입력">${data.lyric}</textarea>
             </td>
             <td>
-                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상">${data.memo}</textarea>
+                <textarea class="input-field auto-resize" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상">${data.memo}</textarea>
             </td>
             <td style="text-align: center;">
                 <button class="btn-icon" onclick="deleteRow(this)" title="삭제">✕</button>
             </td>
         `;
+
+        // Attach auto-resize triggers to newly created textareas
+        const textareas = tr.querySelectorAll('textarea');
+        textareas.forEach(attachAutoResize);
+
         return tr;
     }
 
     function addRow() {
         const tbody = document.getElementById('lighting-tbody');
-        tbody.appendChild(createRow());
+        const newRow = createRow();
+        tbody.appendChild(newRow);
     }
 
     function deleteRow(btn) {
@@ -338,9 +382,25 @@
         row.remove();
     }
 
+    // Recalculate heights for all textareas right before printing
+    function prepareAndPrint() {
+        document.querySelectorAll('textarea.auto-resize').forEach(ta => {
+            autoResizeTextarea(ta);
+        });
+        window.print();
+    }
+
     window.onload = () => {
+        // Initialize example row textareas
+        document.querySelectorAll('.example-row textarea').forEach(autoResizeTextarea);
+        // Add first empty editable row
         addRow();
     };
+
+    // Resize on window resize to ensure correct heights
+    window.addEventListener('resize', () => {
+        document.querySelectorAll('textarea.auto-resize').forEach(autoResizeTextarea);
+    });
 </script>
 
 </body>
