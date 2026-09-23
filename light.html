@@ -63,31 +63,36 @@
             color: var(--text-primary);
         }
 
-        /* Upper Info Grid */
+        /* 상단 개요 - 네모 칸 스타일 강조 */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
+            gap: 16px;
         }
 
-        .input-group {
+        .input-group-box {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
-        .input-group label {
+        .input-group-box label {
             font-size: 13px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--accent-color);
             letter-spacing: -0.2px;
         }
 
         .input-field {
-            background: #FFFFFF;
+            background: #FAFAFC;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            padding: 11px 14px;
+            padding: 10px 12px;
             font-size: 14px;
             color: var(--text-primary);
             outline: none;
@@ -96,6 +101,7 @@
         }
 
         .input-field:focus {
+            background: #FFFFFF;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
         }
@@ -131,12 +137,11 @@
             border-bottom: none;
         }
 
-        /* 입력 및 출력 화면 모두에서 자동으로 높이가 늘어나는 가사/연출 박스 */
         textarea.input-field {
             resize: none;
             min-height: 48px;
             line-height: 1.5;
-            overflow: hidden; /* 스크롤바 감춤 */
+            overflow: hidden;
             display: block;
             box-sizing: border-box;
         }
@@ -222,23 +227,31 @@
             }
             .card { 
                 box-shadow: none !important; 
-                border: 1px solid #D1D1D6 !important; 
+                border: 1px solid #B0B0B8 !important; 
                 border-radius: 12px !important;
                 padding: 20px !important; 
                 background: #FFF !important;
+            }
+            .input-group-box {
+                border: 1.5px solid #8E8E93 !important;
+                border-radius: 8px !important;
+                background: #FFF !important;
+                padding: 12px !important;
+            }
+            .input-group-box label {
+                color: #000 !important;
             }
             .btn-group, .btn-icon, .example-row { 
                 display: none !important; 
             }
             .input-field { 
-                border: 1px solid #C6C6C8 !important; 
+                border: 1px solid #A0A0A5 !important; 
                 border-radius: 6px !important;
                 padding: 8px 10px !important; 
                 background: #FFF !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            /* 인쇄 시 늘어난 높이 그대로 반영 및 스크롤 감춤 유지 */
             textarea.input-field {
                 overflow: hidden !important;
                 white-space: pre-wrap !important;
@@ -253,7 +266,7 @@
                 border-bottom: 2px solid #000 !important;
             }
             td {
-                border-bottom: 1px solid #E5E5EA !important;
+                border-bottom: 1px solid #D1D1D6 !important;
             }
         }
     </style>
@@ -261,23 +274,23 @@
 <body>
 
 <div class="container">
-    <!-- 상단 개요 카드 -->
+    <!-- 상단 개요 카드 (개별 네모 박스로 구별) -->
     <div class="card">
         <h1 class="header-title">조명 연출 구상안</h1>
         <div class="info-grid">
-            <div class="input-group">
+            <div class="input-group-box">
                 <label>곡명</label>
                 <input type="text" class="input-field" placeholder="예: 첫사랑 (First Love)">
             </div>
-            <div class="input-group">
+            <div class="input-group-box">
                 <label>팀명</label>
                 <input type="text" class="input-field" placeholder="예: 루시드 밴드">
             </div>
-            <div class="input-group">
+            <div class="input-group-box">
                 <label>의상 컨셉</label>
                 <input type="text" class="input-field" placeholder="예: 화이트 앤 데님 (깔끔하고 청량한 느낌)">
             </div>
-            <div class="input-group">
+            <div class="input-group-box">
                 <label>전체 메인 컨셉 & 메인 컬러</label>
                 <input type="text" class="input-field" placeholder="예: 아련하고 몽환적인 새벽 / 메인: Deep Blue & Warm White">
             </div>
@@ -329,7 +342,6 @@
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
 
-    // 글자 수/줄바꿈에 맞춰 textarea 높이를 높여주는 함수
     function resizeTextarea(el) {
         if (!el) return;
         el.style.height = 'auto';
@@ -366,7 +378,6 @@
         const newRow = createRow();
         tbody.appendChild(newRow);
 
-        // 생성 직후 및 렌더링 후 높이 자동 맞춤
         setTimeout(() => {
             newRow.querySelectorAll('textarea').forEach(ta => resizeTextarea(ta));
         }, 10);
@@ -377,7 +388,6 @@
         row.remove();
     }
 
-    // PDF 출력 전 모든 박스의 높이를 확실히 정렬한 뒤 출력 창 실행
     function handlePrint() {
         document.querySelectorAll('textarea').forEach(ta => {
             resizeTextarea(ta);
@@ -386,10 +396,7 @@
     }
 
     window.onload = () => {
-        // 예시 행 박스 높이 조정
         document.querySelectorAll('.example-row textarea').forEach(ta => resizeTextarea(ta));
-        
-        // 기본 작성용 첫 번째 행 추가
         addRow();
     };
 </script>
