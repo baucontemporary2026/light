@@ -131,12 +131,14 @@
             border-bottom: none;
         }
 
-        /* 가사 및 연출 입력을 위한 자동 확장 텍스트 영역 */
+        /* 입력 및 출력 화면 모두에서 자동으로 높이가 늘어나는 가사/연출 박스 */
         textarea.input-field {
             resize: none;
             min-height: 48px;
             line-height: 1.5;
             overflow: hidden; /* 스크롤바 감춤 */
+            display: block;
+            box-sizing: border-box;
         }
 
         /* Example Row styling */
@@ -208,7 +210,7 @@
             color: var(--danger-color);
         }
 
-        /* 🖨️ PDF/인쇄 전용 최적화 */
+        /* 🖨️ PDF / 인쇄 전용 레이아웃 설정 */
         @media print {
             body { 
                 background: #FFF !important; 
@@ -228,7 +230,6 @@
             .btn-group, .btn-icon, .example-row { 
                 display: none !important; 
             }
-            /* 인쇄 시 네모칸 테두리가 또렷하게 유지되도록 설정 */
             .input-field { 
                 border: 1px solid #C6C6C8 !important; 
                 border-radius: 6px !important;
@@ -237,8 +238,11 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+            /* 인쇄 시 늘어난 높이 그대로 반영 및 스크롤 감춤 유지 */
             textarea.input-field {
-                height: auto !important; /* PDF 출력 시 내용 전체가 그대로 다 잘림없이 보임 */
+                overflow: hidden !important;
+                white-space: pre-wrap !important;
+                word-wrap: break-word !important;
             }
             select.input-field {
                 -webkit-appearance: none;
@@ -317,7 +321,7 @@
 
         <div class="btn-group">
             <button class="btn btn-secondary" onclick="addRow()">+ 섹션 추가</button>
-            <button class="btn btn-primary" onclick="window.print()">PDF / 인쇄하기</button>
+            <button class="btn btn-primary" onclick="handlePrint()">PDF / 인쇄하기</button>
         </div>
     </div>
 </div>
@@ -325,10 +329,11 @@
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
 
-    // 텍스트 영역 높이 자동 조절 함수
-    function autoResizeTextarea(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
+    // 글자 수/줄바꿈에 맞춰 textarea 높이를 높여주는 함수
+    function resizeTextarea(el) {
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = (el.scrollHeight) + 'px';
     }
 
     function createRow(data = { form: 'Verse 1', lyric: '', memo: '' }) {
@@ -343,27 +348,28 @@
                 <select class="input-field">${options}</select>
             </td>
             <td>
-                <textarea class="input-field auto-resize" placeholder="가사 또는 파트 특징 입력" oninput="autoResizeTextarea(this)">${data.lyric}</textarea>
+                <textarea class="input-field" placeholder="가사 또는 파트 특징 입력" oninput="resizeTextarea(this)">${data.lyric}</textarea>
             </td>
             <td>
-                <textarea class="input-field auto-resize" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상" oninput="autoResizeTextarea(this)">${data.memo}</textarea>
+                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
             </td>
             <td style="text-align: center;">
                 <button class="btn-icon" onclick="deleteRow(this)" title="삭제">✕</button>
             </td>
         `;
 
-        // 요소 생성 후 바로 높이 조정 적용
-        setTimeout(() => {
-            tr.querySelectorAll('textarea.auto-resize').forEach(ta => autoResizeTextarea(ta));
-        }, 0);
-
         return tr;
     }
 
     function addRow() {
         const tbody = document.getElementById('lighting-tbody');
-        tbody.appendChild(createRow());
+        const newRow = createRow();
+        tbody.appendChild(newRow);
+
+        // 생성 직후 및 렌더링 후 높이 자동 맞춤
+        setTimeout(() => {
+            newRow.querySelectorAll('textarea').forEach(ta => resizeTextarea(ta));
+        }, 10);
     }
 
     function deleteRow(btn) {
@@ -371,11 +377,19 @@
         row.remove();
     }
 
+    // PDF 출력 전 모든 박스의 높이를 확실히 정렬한 뒤 출력 창 실행
+    function handlePrint() {
+        document.querySelectorAll('textarea').forEach(ta => {
+            resizeTextarea(ta);
+        });
+        window.print();
+    }
+
     window.onload = () => {
-        // 예시 행의 textarea 높이 맞춤
-        document.querySelectorAll('.example-row textarea').forEach(ta => autoResizeTextarea(ta));
+        // 예시 행 박스 높이 조정
+        document.querySelectorAll('.example-row textarea').forEach(ta => resizeTextarea(ta));
         
-        // 기본 작성용 첫 행 추가
+        // 기본 작성용 첫 번째 행 추가
         addRow();
     };
 </script>
