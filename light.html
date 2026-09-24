@@ -63,7 +63,7 @@
             color: var(--text-primary);
         }
 
-        /* 상단 개요 - 네모 칸 스타일 및 자동 높이 조절 */
+        /* 상단 개요 */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -106,7 +106,7 @@
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
         }
 
-        /* 자동 높이 조절 textarea 공통 스타일 */
+        /* 자동 높이 조절 textarea */
         textarea.input-field {
             resize: none;
             min-height: 42px;
@@ -228,22 +228,23 @@
             }
             .container {
                 max-width: 100% !important;
-                gap: 16px !important;
+                gap: 12px !important;
             }
             .card { 
                 box-shadow: none !important; 
                 border: 1px solid #B0B0B8 !important; 
                 border-radius: 12px !important;
-                padding: 20px !important; 
+                padding: 16px !important; 
                 background: #FFF !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
+                /* 카드 전체 통째로 2페이지 넘김 현상 제거 */
+                page-break-inside: auto !important;
+                break-inside: auto !important;
             }
             .input-group-box {
                 border: 1.5px solid #8E8E93 !important;
                 border-radius: 8px !important;
                 background: #FFF !important;
-                padding: 12px !important;
+                padding: 10px !important;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
@@ -254,13 +255,13 @@
                 display: none !important; 
             }
 
-            /* 송폼 행(Section Row) 중간에서 페이지 분할 방지 */
+            /* 송폼(행) 개별 단위 중간 잘림 방지만 적용 */
             tr {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
 
-            /* 인쇄 시 입력용 필드는 숨기고 완성된 텍스트 뷰 표시 */
+            /* 입력 영역을 출력 전용 div로 교체 */
             .input-field {
                 display: none !important;
             }
@@ -269,11 +270,11 @@
                 display: block !important;
                 border: 1px solid #A0A0A5 !important;
                 border-radius: 6px !important;
-                padding: 8px 10px !important;
+                padding: 6px 8px !important;
                 background: #FFF !important;
-                font-size: 14px !important;
-                line-height: 1.5 !important;
-                min-height: 38px !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+                min-height: 32px !important;
                 white-space: pre-wrap !important;
                 word-break: break-all !important;
                 color: #1D1D1F !important;
@@ -283,9 +284,11 @@
 
             th {
                 border-bottom: 2px solid #000 !important;
+                padding: 8px 12px !important;
             }
             td {
                 border-bottom: 1px solid #D1D1D6 !important;
+                padding: 8px 6px !important;
             }
         }
     </style>
@@ -368,7 +371,6 @@
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
 
-    // 텍스트 길이에 맞춰 높이 자동 조절
     function resizeTextarea(el) {
         if (!el) return;
         el.style.height = 'auto';
