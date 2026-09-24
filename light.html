@@ -63,7 +63,7 @@
             color: var(--text-primary);
         }
 
-        /* 상단 개요 - 네모 칸 스타일 강조 */
+        /* 상단 개요 - 네모 칸 스타일 */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -215,7 +215,11 @@
             color: var(--danger-color);
         }
 
-        /* 🖨️ PDF / 인쇄 전용 레이아웃 설정 */
+        /* 🖨️ PDF / 인쇄 전용 박스 완벽 보장 처리 */
+        .print-view {
+            display: none;
+        }
+
         @media print {
             body { 
                 background: #FFF !important; 
@@ -244,24 +248,28 @@
             .btn-group, .btn-icon, .example-row { 
                 display: none !important; 
             }
-            .input-field { 
-                border: 1px solid #A0A0A5 !important; 
+            
+            /* 인쇄 시 textarea/input 대신 글자 크기에 맞는 백그라운드 박스로 전환하여 잘림 원천 차단 */
+            .input-field {
+                display: none !important;
+            }
+
+            .print-view {
+                display: block !important;
+                border: 1px solid #A0A0A5 !important;
                 border-radius: 6px !important;
-                padding: 8px 10px !important; 
+                padding: 8px 10px !important;
                 background: #FFF !important;
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+                min-height: 38px !important;
+                white-space: pre-wrap !important;
+                word-break: break-all !important;
+                color: #1D1D1F !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            textarea.input-field {
-                overflow: hidden !important;
-                white-space: pre-wrap !important;
-                word-wrap: break-word !important;
-            }
-            select.input-field {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-            }
+
             th {
                 border-bottom: 2px solid #000 !important;
             }
@@ -274,25 +282,29 @@
 <body>
 
 <div class="container">
-    <!-- 상단 개요 카드 (개별 네모 박스로 구별) -->
+    <!-- 상단 개요 카드 -->
     <div class="card">
         <h1 class="header-title">조명 연출 구상안</h1>
         <div class="info-grid">
             <div class="input-group-box">
                 <label>곡명</label>
                 <input type="text" class="input-field" placeholder="예: 첫사랑 (First Love)">
+                <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>팀명</label>
                 <input type="text" class="input-field" placeholder="예: 루시드 밴드">
+                <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>의상 컨셉</label>
                 <input type="text" class="input-field" placeholder="예: 화이트 앤 데님 (깔끔하고 청량한 느낌)">
+                <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>전체 메인 컨셉 & 메인 컬러</label>
                 <input type="text" class="input-field" placeholder="예: 아련하고 몽환적인 새벽 / 메인: Deep Blue & Warm White">
+                <div class="print-view"></div>
             </div>
         </div>
     </div>
@@ -317,12 +329,15 @@
                             <select class="input-field" disabled>
                                 <option>Intro</option>
                             </select>
+                            <div class="print-view">Intro</div>
                         </td>
                         <td>
                             <textarea class="input-field" readonly>(드럼 카운트 후 기타 리프 시작)</textarea>
+                            <div class="print-view">(드럼 카운트 후 기타 리프 시작)</div>
                         </td>
                         <td>
                             <textarea class="input-field" readonly>무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
+                            <div class="print-view">무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</div>
                         </td>
                         <td style="text-align: center;">
                             <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">인쇄 제외</span>
@@ -358,12 +373,15 @@
         tr.innerHTML = `
             <td>
                 <select class="input-field">${options}</select>
+                <div class="print-view">${data.form}</div>
             </td>
             <td>
                 <textarea class="input-field" placeholder="가사 또는 파트 특징 입력" oninput="resizeTextarea(this)">${data.lyric}</textarea>
+                <div class="print-view">${data.lyric}</div>
             </td>
             <td>
                 <textarea class="input-field" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
+                <div class="print-view">${data.memo}</div>
             </td>
             <td style="text-align: center;">
                 <button class="btn-icon" onclick="deleteRow(this)" title="삭제">✕</button>
@@ -388,10 +406,36 @@
         row.remove();
     }
 
+    // PDF/인쇄 출력 시 입력된 텍스트를 print-view 태그에 동기화
     function handlePrint() {
-        document.querySelectorAll('textarea').forEach(ta => {
-            resizeTextarea(ta);
+        // 상단 입력값 동기화
+        document.querySelectorAll('.info-grid .input-group-box').forEach(box => {
+            const input = box.querySelector('input');
+            const printView = box.querySelector('.print-view');
+            if (input && printView) {
+                printView.textContent = input.value || '';
+            }
         });
+
+        // 표 내부 입력값 동기화
+        document.querySelectorAll('#lighting-tbody tr').forEach(tr => {
+            if (tr.classList.contains('example-row')) return;
+            
+            const select = tr.querySelector('select');
+            const textareas = tr.querySelectorAll('textarea');
+            const printViews = tr.querySelectorAll('.print-view');
+
+            if (select && printViews[0]) {
+                printViews[0].textContent = select.value || '';
+            }
+            if (textareas[0] && printViews[1]) {
+                printViews[1].textContent = textareas[0].value || '';
+            }
+            if (textareas[1] && printViews[2]) {
+                printViews[2].textContent = textareas[1].value || '';
+            }
+        });
+
         window.print();
     }
 
