@@ -63,7 +63,7 @@
             color: var(--text-primary);
         }
 
-        /* 상단 개요 - 네모 칸 스타일 */
+        /* 상단 개요 - 네모 칸 스타일 및 자동 높이 조절 */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -106,6 +106,16 @@
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
         }
 
+        /* 자동 높이 조절 textarea 공통 스타일 */
+        textarea.input-field {
+            resize: none;
+            min-height: 42px;
+            line-height: 1.5;
+            overflow: hidden;
+            display: block;
+            box-sizing: border-box;
+        }
+
         /* Table Area */
         .table-container {
             overflow-x: auto;
@@ -135,15 +145,6 @@
 
         tr:last-child td {
             border-bottom: none;
-        }
-
-        textarea.input-field {
-            resize: none;
-            min-height: 48px;
-            line-height: 1.5;
-            overflow: hidden;
-            display: block;
-            box-sizing: border-box;
         }
 
         /* Example Row styling */
@@ -215,7 +216,7 @@
             color: var(--danger-color);
         }
 
-        /* 🖨️ PDF / 인쇄 전용 박스 완벽 보장 처리 */
+        /* 🖨️ PDF / 인쇄 전용 레이아웃 설정 */
         .print-view {
             display: none;
         }
@@ -235,12 +236,16 @@
                 border-radius: 12px !important;
                 padding: 20px !important; 
                 background: #FFF !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             .input-group-box {
                 border: 1.5px solid #8E8E93 !important;
                 border-radius: 8px !important;
                 background: #FFF !important;
                 padding: 12px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             .input-group-box label {
                 color: #000 !important;
@@ -248,8 +253,14 @@
             .btn-group, .btn-icon, .example-row { 
                 display: none !important; 
             }
-            
-            /* 인쇄 시 textarea/input 대신 글자 크기에 맞는 백그라운드 박스로 전환하여 잘림 원천 차단 */
+
+            /* 송폼 행(Section Row) 중간에서 페이지 분할 방지 */
+            tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* 인쇄 시 입력용 필드는 숨기고 완성된 텍스트 뷰 표시 */
             .input-field {
                 display: none !important;
             }
@@ -288,22 +299,22 @@
         <div class="info-grid">
             <div class="input-group-box">
                 <label>곡명</label>
-                <input type="text" class="input-field" placeholder="예: 첫사랑 (First Love)">
+                <textarea class="input-field" placeholder="예: 첫사랑 (First Love)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>팀명</label>
-                <input type="text" class="input-field" placeholder="예: 루시드 밴드">
+                <textarea class="input-field" placeholder="예: 루시드 밴드" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>의상 컨셉</label>
-                <input type="text" class="input-field" placeholder="예: 화이트 앤 데님 (깔끔하고 청량한 느낌)">
+                <textarea class="input-field" placeholder="예: 화이트 앤 데님 (깔끔하고 청량한 느낌)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>전체 메인 컨셉 & 메인 컬러</label>
-                <input type="text" class="input-field" placeholder="예: 아련하고 몽환적인 새벽 / 메인: Deep Blue & Warm White">
+                <textarea class="input-field" placeholder="예: 아련하고 몽환적인 새벽 / 메인: Deep Blue & Warm White" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
         </div>
@@ -357,6 +368,7 @@
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
 
+    // 텍스트 길이에 맞춰 높이 자동 조절
     function resizeTextarea(el) {
         if (!el) return;
         el.style.height = 'auto';
@@ -406,14 +418,13 @@
         row.remove();
     }
 
-    // PDF/인쇄 출력 시 입력된 텍스트를 print-view 태그에 동기화
     function handlePrint() {
         // 상단 입력값 동기화
         document.querySelectorAll('.info-grid .input-group-box').forEach(box => {
-            const input = box.querySelector('input');
+            const textarea = box.querySelector('textarea');
             const printView = box.querySelector('.print-view');
-            if (input && printView) {
-                printView.textContent = input.value || '';
+            if (textarea && printView) {
+                printView.textContent = textarea.value || '';
             }
         });
 
@@ -440,7 +451,7 @@
     }
 
     window.onload = () => {
-        document.querySelectorAll('.example-row textarea').forEach(ta => resizeTextarea(ta));
+        document.querySelectorAll('textarea').forEach(ta => resizeTextarea(ta));
         addRow();
     };
 </script>
