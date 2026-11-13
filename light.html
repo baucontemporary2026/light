@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공연 조명 구상안</title>
+    <!-- 모바일 및 PC 직접 PDF 변환을 위한 html2pdf 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg-color: #F5F5F7;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-primary: #1D1D1F;
             --text-secondary: #6E6E73;
             --border-color: #D1D1D6;
@@ -31,7 +33,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
-            padding: 40px 20px;
+            padding: 32px 16px;
             display: flex;
             justify-content: center;
         }
@@ -41,7 +43,37 @@
             max-width: 960px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
+        }
+
+        /* 💡 카카오톡/인앱 브라우저 안내 배너 */
+        .browser-notice {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            border: 1.5px solid #FFC107;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.15);
+        }
+
+        .browser-notice span.icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: -1px;
+        }
+
+        .browser-notice-content {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #5D4037;
+            font-weight: 500;
+        }
+
+        .browser-notice-content strong {
+            color: #D32F2F;
+            font-weight: 700;
         }
 
         /* Card Style */
@@ -51,15 +83,21 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: var(--radius-lg);
-            padding: 32px;
+            padding: 28px;
             box-shadow: var(--shadow);
         }
 
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .header-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            margin-bottom: 24px;
             color: var(--text-primary);
         }
 
@@ -67,17 +105,26 @@
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 20px 16px;
+            }
         }
 
         .input-group-box {
             background: #FFFFFF;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 16px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
@@ -92,7 +139,7 @@
             background: #FAFAFC;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            padding: 10px 12px;
+            padding: 9px 11px;
             font-size: 14px;
             color: var(--text-primary);
             outline: none;
@@ -106,14 +153,36 @@
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
         }
 
-        /* 자동 높이 조절 textarea */
         textarea.input-field {
             resize: none;
-            min-height: 42px;
+            min-height: 40px;
             line-height: 1.5;
             overflow: hidden;
             display: block;
-            box-sizing: border-box;
+        }
+
+        /* 직접 입력 래퍼 */
+        .custom-form-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-revert-select {
+            background: #E8E8ED;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 8px 7px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-revert-select:hover {
+            background: #D1D1D6;
+            color: var(--text-primary);
         }
 
         /* Table Area */
@@ -125,7 +194,7 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 8px;
+            min-width: 600px;
         }
 
         th {
@@ -133,12 +202,12 @@
             font-weight: 700;
             color: var(--text-primary);
             text-align: left;
-            padding: 12px 16px;
+            padding: 12px 10px;
             border-bottom: 2px solid var(--text-primary);
         }
 
         td {
-            padding: 12px 8px;
+            padding: 10px 6px;
             border-bottom: 1px solid var(--border-color);
             vertical-align: top;
         }
@@ -160,7 +229,41 @@
             font-weight: 700;
             padding: 2px 6px;
             border-radius: 4px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+        }
+
+        /* 행 조작 버튼 (순서 이동 + 삭제) */
+        .row-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .move-btns {
+            display: flex;
+            gap: 2px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+
+        .btn-icon:hover {
+            background-color: #E8E8ED;
+            color: var(--text-primary);
+        }
+
+        .btn-icon.delete:hover {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--danger-color);
         }
 
         /* Buttons */
@@ -169,6 +272,14 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .export-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -184,12 +295,17 @@
             transition: all 0.2s ease;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .btn-primary {
             background-color: var(--accent-color);
             color: #FFFFFF;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: var(--accent-hover);
         }
 
@@ -202,43 +318,94 @@
             background-color: #DDDDED;
         }
 
-        .btn-icon {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: color 0.2s;
-        }
-
-        .btn-icon:hover {
-            color: var(--danger-color);
-        }
-
-        /* 🖨️ PDF / 인쇄 전용 레이아웃 설정 */
+        /* PDF 출력 전용 뷰 (평소엔 숨김) */
         .print-view {
             display: none;
         }
 
+        /* PDF 캡처 모드 및 인쇄 모드 공통 스타일 */
+        .pdf-export-mode {
+            background: #FFFFFF !important;
+            padding: 10px !important;
+            max-width: 900px !important;
+            width: 900px !important;
+        }
+
+        .pdf-export-mode .card {
+            box-shadow: none !important;
+            border: 1px solid #B0B0B8 !important;
+            border-radius: 12px !important;
+            padding: 18px !important;
+            background: #FFFFFF !important;
+            backdrop-filter: none !important;
+        }
+
+        .pdf-export-mode .info-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        .pdf-export-mode .input-group-box {
+            border: 1.5px solid #8E8E93 !important;
+            border-radius: 8px !important;
+            background: #FFFFFF !important;
+            padding: 10px !important;
+        }
+
+        .pdf-export-mode .input-group-box label {
+            color: #000000 !important;
+        }
+
+        .pdf-export-mode .browser-notice,
+        .pdf-export-mode .btn-group,
+        .pdf-export-mode .row-actions,
+        .pdf-export-mode .example-row,
+        .pdf-export-mode .action-col,
+        .pdf-export-mode .btn-revert-select {
+            display: none !important;
+        }
+
+        .pdf-export-mode .input-field {
+            display: none !important;
+        }
+
+        .pdf-export-mode .print-view {
+            display: block !important;
+            border: 1px solid #A0A0A5 !important;
+            border-radius: 6px !important;
+            padding: 6px 8px !important;
+            background: #FFFFFF !important;
+            font-size: 13px !important;
+            line-height: 1.45 !important;
+            min-height: 32px !important;
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
+            color: #1D1D1F !important;
+        }
+
+        .pdf-export-mode table {
+            min-width: 100% !important;
+        }
+
+        .pdf-export-mode tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
         @media print {
-            body { 
-                background: #FFF !important; 
-                padding: 0 !important; 
+            body {
+                background: #FFF !important;
+                padding: 0 !important;
             }
             .container {
                 max-width: 100% !important;
                 gap: 12px !important;
             }
-            .card { 
-                box-shadow: none !important; 
-                border: 1px solid #B0B0B8 !important; 
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #B0B0B8 !important;
                 border-radius: 12px !important;
-                padding: 16px !important; 
+                padding: 16px !important;
                 background: #FFF !important;
-                /* 카드 전체 통째로 2페이지 넘김 현상 제거 */
-                page-break-inside: auto !important;
-                break-inside: auto !important;
             }
             .input-group-box {
                 border: 1.5px solid #8E8E93 !important;
@@ -246,26 +413,20 @@
                 background: #FFF !important;
                 padding: 10px !important;
                 page-break-inside: avoid;
-                break-inside: avoid;
             }
             .input-group-box label {
                 color: #000 !important;
             }
-            .btn-group, .btn-icon, .example-row { 
-                display: none !important; 
+            .browser-notice, .btn-group, .row-actions, .example-row, .action-col, .btn-revert-select {
+                display: none !important;
             }
-
-            /* 송폼(행) 개별 단위 중간 잘림 방지만 적용 */
             tr {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-
-            /* 입력 영역을 출력 전용 div로 교체 */
             .input-field {
                 display: none !important;
             }
-
             .print-view {
                 display: block !important;
                 border: 1px solid #A0A0A5 !important;
@@ -276,38 +437,40 @@
                 line-height: 1.4 !important;
                 min-height: 32px !important;
                 white-space: pre-wrap !important;
-                word-break: break-all !important;
+                word-break: break-word !important;
                 color: #1D1D1F !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            th {
-                border-bottom: 2px solid #000 !important;
-                padding: 8px 12px !important;
-            }
-            td {
-                border-bottom: 1px solid #D1D1D6 !important;
-                padding: 8px 6px !important;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="capture-area">
+    
+    <!-- 💡 카카오톡 / 인앱 브라우저 접속 안내 배너 -->
+    <div class="browser-notice">
+        <span class="icon">⚠️</span>
+        <div class="browser-notice-content">
+            <strong>모바일(카카오톡·인라인) 브라우저 이용 시 주의사항</strong><br>
+            PDF 다운로드가 원활하지 않거나 저장 안 됨 현상이 발생할 수 있습니다. 
+            그럴 경우 우측 하단/상단 메뉴 버튼을 눌러 <strong>[다른 브라우저(사파리 / 크롬)로 열기]</strong>를 진행한 뒤 다운로드해 주세요!
+        </div>
+    </div>
+
     <!-- 상단 개요 카드 -->
     <div class="card">
-        <h1 class="header-title">조명 연출 구상안</h1>
+        <div class="header-row">
+            <h1 class="header-title">조명 연출 구상안</h1>
+        </div>
         <div class="info-grid">
             <div class="input-group-box">
                 <label>곡명</label>
-                <textarea class="input-field" placeholder="예: 첫사랑 (First Love)" oninput="resizeTextarea(this)"></textarea>
+                <textarea id="song-title" class="input-field" placeholder="예: 첫사랑 (First Love)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>팀명</label>
-                <textarea class="input-field" placeholder="예: 루시드 밴드" oninput="resizeTextarea(this)"></textarea>
+                <textarea id="team-name" class="input-field" placeholder="예: 루시드 밴드" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
@@ -329,32 +492,27 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 18%;">송폼 (Song Form)</th>
-                        <th style="width: 37%;">가사 (주요 파트)</th>
-                        <th style="width: 40%;">희망하는 조명 연출</th>
-                        <th style="width: 5%;"></th>
+                        <th style="width: 20%;">송폼 (Song Form)</th>
+                        <th style="width: 35%;">가사 (주요 파트)</th>
+                        <th style="width: 37%;">희망하는 조명 연출</th>
+                        <th class="action-col" style="width: 8%; text-align: center;">순서/삭제</th>
                     </tr>
                 </thead>
                 <tbody id="lighting-tbody">
-                    <!-- 예시 전용 행 (인쇄 시 자동 숨김) -->
-                    <tr class="example-row">
+                    <!-- 예시 전용 행 (인쇄/PDF 시 자동 숨김) -->
+                    <tr class="example-row" id="example-row">
                         <td>
-                            <span class="example-badge">예시</span>
-                            <select class="input-field" disabled>
-                                <option>Intro</option>
-                            </select>
-                            <div class="print-view">Intro</div>
+                            <span class="example-badge">예시 (출력 제외)</span>
+                            <input type="text" class="input-field" value="Intro" oninput="saveExampleData()">
                         </td>
                         <td>
-                            <textarea class="input-field" readonly>(드럼 카운트 후 기타 리프 시작)</textarea>
-                            <div class="print-view">(드럼 카운트 후 기타 리프 시작)</div>
+                            <textarea class="input-field" oninput="resizeTextarea(this); saveExampleData()">(드럼 카운트 후 기타 리프 시작)</textarea>
                         </td>
                         <td>
-                            <textarea class="input-field" readonly>무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
-                            <div class="print-view">무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</div>
+                            <textarea class="input-field" oninput="resizeTextarea(this); saveExampleData()">무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
                         </td>
-                        <td style="text-align: center;">
-                            <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">인쇄 제외</span>
+                        <td class="action-col" style="text-align: center; vertical-align: middle;">
+                            <span style="font-size: 11px; color: var(--text-secondary);">고정</span>
                         </td>
                     </tr>
                 </tbody>
@@ -362,8 +520,11 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-secondary" onclick="addRow()">+ 섹션 추가</button>
-            <button class="btn btn-primary" onclick="handlePrint()">PDF / 인쇄하기</button>
+            <button type="button" class="btn btn-secondary" onclick="addRow()">+ 섹션 추가</button>
+            <div class="export-btns">
+                <button type="button" class="btn btn-secondary" onclick="handleNativePrint()">인쇄 창 열기</button>
+                <button type="button" id="btn-download-pdf" class="btn btn-primary" onclick="downloadPDF()">PDF 파일 다운로드</button>
+            </div>
         </div>
     </div>
 </div>
@@ -371,22 +532,85 @@
 <script>
     const songForms = ['Intro', 'Verse 1', 'Verse 2', 'Pre-Chorus', 'Chorus 1', 'Chorus 2', 'Interlude', 'Bridge', 'Outro', '직접 입력'];
 
+    // Textarea 높이 자동 조절
     function resizeTextarea(el) {
         if (!el) return;
         el.style.height = 'auto';
         el.style.height = (el.scrollHeight) + 'px';
     }
 
+    // 예시 데이터 로컬 저장
+    function saveExampleData() {
+        const row = document.getElementById('example-row');
+        if(!row) return;
+        const inputs = row.querySelectorAll('input, textarea');
+        const data = {
+            form: inputs[0].value,
+            lyric: inputs[1].value,
+            memo: inputs[2].value
+        };
+        localStorage.setItem('lighting_example_data', JSON.stringify(data));
+    }
+
+    // 저장된 예시 데이터 불러오기
+    function loadExampleData() {
+        const saved = localStorage.getItem('lighting_example_data');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                const row = document.getElementById('example-row');
+                if(!row) return;
+                const inputs = row.querySelectorAll('input, textarea');
+                if (data.form !== undefined) inputs[0].value = data.form;
+                if (data.lyric !== undefined) inputs[1].value = data.lyric;
+                if (data.memo !== undefined) inputs[2].value = data.memo;
+            } catch (e) {}
+        }
+    }
+
+    // 송폼 드롭다운 변경 시 '직접 입력' 처리
+    function handleFormSelectChange(selectEl) {
+        const td = selectEl.closest('td');
+        const customWrapper = td.querySelector('.custom-form-wrapper');
+        const customInput = customWrapper.querySelector('input');
+
+        if (selectEl.value === '직접 입력') {
+            selectEl.style.display = 'none';
+            customWrapper.style.display = 'flex';
+            customInput.value = '';
+            customInput.focus();
+        }
+    }
+
+    // '직접 입력'에서 다시 드롭다운으로 복귀
+    function revertToSelect(btn) {
+        const td = btn.closest('td');
+        const selectEl = td.querySelector('select');
+        const customWrapper = td.querySelector('.custom-form-wrapper');
+
+        customWrapper.style.display = 'none';
+        selectEl.style.display = 'block';
+        selectEl.value = 'Verse 1';
+    }
+
+    // 새로운 행 생성
     function createRow(data = { form: 'Verse 1', lyric: '', memo: '' }) {
         const tr = document.createElement('tr');
-        
+        const isCustom = !songForms.includes(data.form) || data.form === '직접 입력';
+
         const options = songForms.map(f => 
-            `<option value="${f}" ${f === data.form ? 'selected' : ''}>${f}</option>`
+            `<option value="${f}" ${(f === data.form || (isCustom && f === '직접 입력')) ? 'selected' : ''}>${f}</option>`
         ).join('');
 
         tr.innerHTML = `
             <td>
-                <select class="input-field">${options}</select>
+                <select class="input-field form-select" onchange="handleFormSelectChange(this)" style="${isCustom ? 'display:none;' : ''}">
+                    ${options}
+                </select>
+                <div class="custom-form-wrapper" style="${isCustom ? 'display:flex;' : 'display:none;'}">
+                    <input type="text" class="input-field form-custom-input" placeholder="송폼 입력" value="${isCustom && data.form !== '직접 입력' ? data.form : ''}">
+                    <button type="button" class="btn-revert-select" onclick="revertToSelect(this)" title="목록에서 선택">↺</button>
+                </div>
                 <div class="print-view">${data.form}</div>
             </td>
             <td>
@@ -397,8 +621,14 @@
                 <textarea class="input-field" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
                 <div class="print-view">${data.memo}</div>
             </td>
-            <td style="text-align: center;">
-                <button class="btn-icon" onclick="deleteRow(this)" title="삭제">✕</button>
+            <td class="action-col" style="text-align: center;">
+                <div class="row-actions">
+                    <div class="move-btns">
+                        <button type="button" class="btn-icon" onclick="moveRow(this, -1)" title="위로 이동">▲</button>
+                        <button type="button" class="btn-icon" onclick="moveRow(this, 1)" title="아래로 이동">▼</button>
+                    </div>
+                    <button type="button" class="btn-icon delete" onclick="deleteRow(this)" title="삭제">✕</button>
+                </div>
             </td>
         `;
 
@@ -415,44 +645,107 @@
         }, 10);
     }
 
+    // 행 위/아래 순서 변경
+    function moveRow(btn, direction) {
+        const tr = btn.closest('tr');
+        const tbody = tr.parentNode;
+
+        if (direction === -1) {
+            const prev = tr.previousElementSibling;
+            if (prev && !prev.classList.contains('example-row')) {
+                tbody.insertBefore(tr, prev);
+            }
+        } else if (direction === 1) {
+            const next = tr.nextElementSibling;
+            if (next) {
+                tbody.insertBefore(next, tr);
+            }
+        }
+    }
+
     function deleteRow(btn) {
         const row = btn.closest('tr');
         row.remove();
     }
 
-    function handlePrint() {
-        // 상단 입력값 동기화
+    // 입력값 동기화
+    function syncPrintViews() {
         document.querySelectorAll('.info-grid .input-group-box').forEach(box => {
             const textarea = box.querySelector('textarea');
             const printView = box.querySelector('.print-view');
             if (textarea && printView) {
-                printView.textContent = textarea.value || '';
+                printView.textContent = textarea.value || ' ';
             }
         });
 
-        // 표 내부 입력값 동기화
         document.querySelectorAll('#lighting-tbody tr').forEach(tr => {
             if (tr.classList.contains('example-row')) return;
-            
-            const select = tr.querySelector('select');
+
+            const select = tr.querySelector('.form-select');
+            const customInput = tr.querySelector('.form-custom-input');
             const textareas = tr.querySelectorAll('textarea');
             const printViews = tr.querySelectorAll('.print-view');
 
-            if (select && printViews[0]) {
-                printViews[0].textContent = select.value || '';
+            let formValue = '';
+            if (select && select.style.display === 'none' && customInput) {
+                formValue = customInput.value || '직접 입력';
+            } else if (select) {
+                formValue = select.value || '';
             }
-            if (textareas[0] && printViews[1]) {
-                printViews[1].textContent = textareas[0].value || '';
-            }
-            if (textareas[1] && printViews[2]) {
-                printViews[2].textContent = textareas[1].value || '';
-            }
-        });
 
+            if (printViews[0]) printViews[0].textContent = formValue || ' ';
+            if (textareas[0] && printViews[1]) printViews[1].textContent = textareas[0].value || ' ';
+            if (textareas[1] && printViews[2]) printViews[2].textContent = textareas[1].value || ' ';
+        });
+    }
+
+    // PDF 다운로드
+    async function downloadPDF() {
+        const btn = document.getElementById('btn-download-pdf');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'PDF 생성 중...';
+
+        syncPrintViews();
+
+        const container = document.getElementById('capture-area');
+        container.classList.add('pdf-export-mode');
+
+        const songTitle = document.getElementById('song-title').value.trim();
+        const teamName = document.getElementById('team-name').value.trim();
+        let fileName = '공연_조명_구상안.pdf';
+        if (songTitle || teamName) {
+            fileName = `${[teamName, songTitle, '조명구상안'].filter(Boolean).join('_')}.pdf`;
+        }
+
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     fileName,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        try {
+            await html2pdf().set(opt).from(container).save();
+        } catch (err) {
+            alert('PDF 자동 다운로드 중 오류가 발생했습니다. [인쇄 창 열기] 버튼을 이용해 주세요.');
+            console.error(err);
+        } finally {
+            container.classList.remove('pdf-export-mode');
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function handleNativePrint() {
+        syncPrintViews();
         window.print();
     }
 
     window.onload = () => {
+        loadExampleData();
         document.querySelectorAll('textarea').forEach(ta => resizeTextarea(ta));
         addRow();
     };
