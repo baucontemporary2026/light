@@ -12,7 +12,7 @@
             --card-bg: #FFFFFF;
             --text-primary: #1D1D1F;
             --text-secondary: #6E6E73;
-            --border-color: #D1D1D6;
+            --border-color: #C5C5CE;
             --accent-color: #0071E3;
             --accent-hover: #0077ED;
             --danger-color: #FF3B30;
@@ -30,14 +30,14 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
-            padding: 8px;
+            padding: 10px;
             display: flex;
             justify-content: center;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -74,9 +74,9 @@
         /* Card Style */
         .card {
             background: var(--card-bg);
-            border: 1px solid #C5C5CE;
+            border: 1px solid #B0B0B8;
             border-radius: 6px;
-            padding: 10px 12px;
+            padding: 10px 14px;
         }
 
         .header-row {
@@ -93,7 +93,7 @@
             color: var(--text-primary);
         }
 
-        /* 상단 개요 (2열 초압축 그리드) */
+        /* 상단 개요 (2열 컴팩트 그리드) */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -113,11 +113,11 @@
             padding: 6px 8px;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
 
         .input-group-box label {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             color: var(--accent-color);
         }
@@ -166,14 +166,15 @@
 
         /* Table Area */
         .table-container {
-            overflow-x: auto;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            min-width: 500px;
+            table-layout: fixed;
         }
 
         th {
@@ -181,14 +182,16 @@
             font-weight: 700;
             color: var(--text-primary);
             text-align: left;
-            padding: 5px 4px;
-            border-bottom: 2px solid var(--text-primary);
+            padding: 6px 4px;
+            border-bottom: 1.5px solid var(--text-primary);
+            word-break: break-all;
         }
 
         td {
-            padding: 5px 4px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 6px 4px;
+            border-bottom: 1px solid #E0E0E5;
             vertical-align: top;
+            word-break: break-all;
         }
 
         tr:last-child td {
@@ -249,9 +252,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 8px;
+            margin-top: 10px;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
         }
 
         .export-btns {
@@ -301,8 +304,12 @@
             display: none;
         }
 
-        /* PDF 캡처 모드 및 인쇄 모드 공통 스타일 (강제 제로 여백 및 1페이지 압축) */
+        /* 🔥 PDF 내보내기 및 인쇄 시 무조건 1페이지 안에 완벽 고정되는 스타일 */
         .pdf-export-mode, @media print {
+            @page {
+                size: A4 portrait;
+                margin: 6mm;
+            }
             body {
                 background: #FFFFFF !important;
                 padding: 0 !important;
@@ -312,6 +319,8 @@
                 max-width: 100% !important;
                 width: 100% !important;
                 gap: 4px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
             .card {
                 box-shadow: none !important;
@@ -323,10 +332,10 @@
                 break-inside: avoid !important;
             }
             .header-row {
-                margin-bottom: 4px !important;
+                margin-bottom: 3px !important;
             }
             .header-title {
-                font-size: 14px !important;
+                font-size: 13.5px !important;
             }
             .info-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -334,15 +343,15 @@
             }
             .input-group-box {
                 border: 1px solid #6E6E73 !important;
-                border-radius: 4px !important;
+                border-radius: 3px !important;
                 background: #FFFFFF !important;
-                padding: 4px 6px !important;
+                padding: 3px 5px !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
             .input-group-box label {
                 color: #000000 !important;
-                font-size: 10px !important;
+                font-size: 9.5px !important;
             }
             .browser-notice, .btn-group, .row-actions, .example-row, .action-col, .btn-revert-select {
                 display: none !important;
@@ -352,12 +361,12 @@
                 width: 100% !important;
             }
             th {
-                font-size: 10.5px !important;
-                padding: 4px 3px !important;
+                font-size: 10px !important;
+                padding: 4px 2px !important;
                 border-bottom: 1.5px solid #000 !important;
             }
             td {
-                padding: 4px 3px !important;
+                padding: 4px 2px !important;
             }
             tr {
                 page-break-inside: avoid !important;
@@ -368,15 +377,14 @@
             }
             .print-view {
                 display: block !important;
-                border: 1px solid #A0A0A5 !important;
-                border-radius: 3px !important;
-                padding: 3px 5px !important;
+                border: none !important;
+                padding: 1px 2px !important;
                 background: #FFFFFF !important;
-                font-size: 11px !important;
+                font-size: 10px !important;
                 line-height: 1.25 !important;
                 width: 100% !important;
                 white-space: pre-wrap !important;
-                word-break: break-word !important;
+                word-break: break-all !important;
                 overflow-wrap: break-word !important;
                 color: #1D1D1F !important;
             }
@@ -664,7 +672,7 @@
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['css', 'legacy'] }
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         try {
