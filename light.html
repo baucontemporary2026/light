@@ -9,17 +9,15 @@
     <style>
         :root {
             --bg-color: #F5F5F7;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --text-primary: #1D1D1F;
             --text-secondary: #6E6E73;
             --border-color: #D1D1D6;
             --accent-color: #0071E3;
             --accent-hover: #0077ED;
             --danger-color: #FF3B30;
-            --radius-lg: 18px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --radius-md: 10px;
+            --radius-sm: 6px;
         }
 
         * {
@@ -33,40 +31,38 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
-            padding: 32px 16px;
+            padding: 16px;
             display: flex;
             justify-content: center;
         }
 
         .container {
             width: 100%;
-            max-width: 960px;
+            max-width: 900px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
         }
 
         /* 💡 카카오톡/인앱 브라우저 안내 배너 */
         .browser-notice {
             background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-            border: 1.5px solid #FFC107;
-            border-radius: var(--radius-md);
-            padding: 14px 18px;
+            border: 1px solid #FFC107;
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.15);
+            gap: 10px;
+            font-size: 12.5px;
         }
 
         .browser-notice span.icon {
-            font-size: 20px;
+            font-size: 16px;
             flex-shrink: 0;
-            margin-top: -1px;
         }
 
         .browser-notice-content {
-            font-size: 13.5px;
-            line-height: 1.5;
+            line-height: 1.4;
             color: #5D4037;
             font-weight: 500;
         }
@@ -79,84 +75,76 @@
         /* Card Style */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
 
         .header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .header-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: var(--text-primary);
         }
 
-        /* 상단 개요 */
+        /* 상단 개요 (2열 컴팩트 그리드) */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
+            gap: 10px;
         }
 
         @media (max-width: 640px) {
             .info-grid {
                 grid-template-columns: 1fr;
             }
-            .card {
-                padding: 20px 16px;
-            }
         }
 
         .input-group-box {
             background: #FFFFFF;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px;
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            gap: 4px;
         }
 
         .input-group-box label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--accent-color);
-            letter-spacing: -0.2px;
         }
 
         .input-field {
             background: #FAFAFC;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 9px 11px;
-            font-size: 14px;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 13.5px;
             color: var(--text-primary);
             outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
             width: 100%;
         }
 
         .input-field:focus {
             background: #FFFFFF;
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.12);
         }
 
         textarea.input-field {
             resize: none;
-            min-height: 40px;
-            line-height: 1.5;
+            min-height: 32px;
+            line-height: 1.4;
             overflow: hidden;
             display: block;
         }
@@ -171,18 +159,12 @@
         .btn-revert-select {
             background: #E8E8ED;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             color: var(--text-secondary);
-            font-size: 12px;
-            padding: 8px 7px;
+            font-size: 11px;
+            padding: 6px;
             cursor: pointer;
             flex-shrink: 0;
-            transition: background 0.2s;
-        }
-
-        .btn-revert-select:hover {
-            background: #D1D1D6;
-            color: var(--text-primary);
         }
 
         /* Table Area */
@@ -194,20 +176,20 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            min-width: 600px;
+            min-width: 550px;
         }
 
         th {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-primary);
             text-align: left;
-            padding: 12px 10px;
+            padding: 8px 6px;
             border-bottom: 2px solid var(--text-primary);
         }
 
         td {
-            padding: 10px 6px;
+            padding: 8px 6px;
             border-bottom: 1px solid var(--border-color);
             vertical-align: top;
         }
@@ -218,21 +200,21 @@
 
         /* Example Row styling */
         tr.example-row {
-            background-color: rgba(255, 204, 0, 0.08);
+            background-color: rgba(255, 204, 0, 0.06);
         }
 
         .example-badge {
             display: inline-block;
             background-color: #FFCC00;
             color: #1D1D1F;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-bottom: 6px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-bottom: 4px;
         }
 
-        /* 행 조작 버튼 (순서 이동 + 삭제) */
+        /* 행 조작 버튼 */
         .row-actions {
             display: flex;
             flex-direction: column;
@@ -250,10 +232,9 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 6px;
-            font-size: 12px;
-            transition: all 0.15s;
+            padding: 3px 5px;
+            border-radius: 4px;
+            font-size: 11px;
         }
 
         .btn-icon:hover {
@@ -271,14 +252,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 14px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .export-btns {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
@@ -286,13 +267,13 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 18px;
-            font-size: 14px;
+            padding: 8px 14px;
+            font-size: 13px;
             font-weight: 600;
             border-radius: 980px;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s;
         }
 
         .btn:disabled {
@@ -323,120 +304,41 @@
             display: none;
         }
 
-        /* PDF 캡처 모드 및 인쇄 모드 공통 스타일 */
-        .pdf-export-mode {
-            background: #FFFFFF !important;
-            padding: 10px !important;
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-
-        .pdf-export-mode .container {
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-
-        .pdf-export-mode .card {
-            box-shadow: none !important;
-            border: 1px solid #B0B0B8 !important;
-            border-radius: 12px !important;
-            padding: 16px !important;
-            background: #FFFFFF !important;
-            backdrop-filter: none !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-        }
-
-        .pdf-export-mode .info-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-        }
-
-        .pdf-export-mode .input-group-box {
-            border: 1.5px solid #8E8E93 !important;
-            border-radius: 8px !important;
-            background: #FFFFFF !important;
-            padding: 10px !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-        }
-
-        .pdf-export-mode .input-group-box label {
-            color: #000000 !important;
-        }
-
-        .pdf-export-mode .browser-notice,
-        .pdf-export-mode .btn-group,
-        .pdf-export-mode .row-actions,
-        .pdf-export-mode .example-row,
-        .pdf-export-mode .action-col,
-        .pdf-export-mode .btn-revert-select {
-            display: none !important;
-        }
-
-        .pdf-export-mode .input-field {
-            display: none !important;
-        }
-
-        .pdf-export-mode .print-view {
-            display: block !important;
-            border: 1px solid #A0A0A5 !important;
-            border-radius: 6px !important;
-            padding: 8px 10px !important;
-            background: #FFFFFF !important;
-            font-size: 13px !important;
-            line-height: 1.5 !important;
-            width: 100% !important;
-            white-space: pre-wrap !important;
-            word-break: break-word !important;
-            overflow-wrap: break-word !important;
-            color: #1D1D1F !important;
-        }
-
-        .pdf-export-mode table {
-            min-width: 100% !important;
-            width: 100% !important;
-            table-layout: fixed !important;
-        }
-
-        .pdf-export-mode th, 
-        .pdf-export-mode td {
-            word-break: break-word !important;
-            overflow-wrap: break-word !important;
-        }
-
-        .pdf-export-mode tr {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-        }
-
-        @media print {
+        /* PDF 캡처 모드 및 인쇄 모드 공통 스타일 (공간 절약형 초압축) */
+        .pdf-export-mode, @media print {
             body {
-                background: #FFF !important;
+                background: #FFFFFF !important;
                 padding: 0 !important;
             }
             .container {
                 max-width: 100% !important;
-                gap: 12px !important;
+                width: 100% !important;
+                gap: 8px !important;
             }
             .card {
                 box-shadow: none !important;
                 border: 1px solid #B0B0B8 !important;
-                border-radius: 12px !important;
-                padding: 16px !important;
-                background: #FFF !important;
+                border-radius: 8px !important;
+                padding: 10px 14px !important;
+                background: #FFFFFF !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
             .input-group-box {
-                border: 1.5px solid #8E8E93 !important;
-                border-radius: 8px !important;
-                background: #FFF !important;
-                padding: 10px !important;
+                border: 1px solid #8E8E93 !important;
+                border-radius: 6px !important;
+                background: #FFFFFF !important;
+                padding: 6px 8px !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
             .input-group-box label {
-                color: #000 !important;
+                color: #000000 !important;
+                font-size: 11px !important;
             }
             .browser-notice, .btn-group, .row-actions, .example-row, .action-col, .btn-revert-select {
                 display: none !important;
@@ -444,6 +346,13 @@
             table {
                 table-layout: fixed !important;
                 width: 100% !important;
+            }
+            th {
+                font-size: 11px !important;
+                padding: 6px 4px !important;
+            }
+            td {
+                padding: 6px 4px !important;
             }
             tr {
                 page-break-inside: avoid !important;
@@ -454,12 +363,12 @@
             }
             .print-view {
                 display: block !important;
-                border: 1px solid #A0A0A5 !important;
-                border-radius: 6px !important;
-                padding: 8px 10px !important;
-                background: #FFF !important;
-                font-size: 13px !important;
-                line-height: 1.5 !important;
+                border: 1px solid #C0C0C5 !important;
+                border-radius: 4px !important;
+                padding: 4px 6px !important;
+                background: #FFFFFF !important;
+                font-size: 12px !important;
+                line-height: 1.35 !important;
                 width: 100% !important;
                 white-space: pre-wrap !important;
                 word-break: break-word !important;
@@ -501,12 +410,12 @@
             </div>
             <div class="input-group-box">
                 <label>의상 컨셉</label>
-                <textarea class="input-field" placeholder="예: 화이트 앤 데님 (색상 위주로 작성 : 조명과 겹치지 않기 위함입니다!)" oninput="resizeTextarea(this)"></textarea>
+                <textarea class="input-field" placeholder="예: 화이트 앤 데님 (색상 위주 작성)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>전체 메인 컨셉 & 메인 컬러</label>
-                <textarea class="input-field" placeholder="예: 메인: Deep Blue & Warm White (색상 위주로 작성)" oninput="resizeTextarea(this)"></textarea>
+                <textarea class="input-field" placeholder="예: Deep Blue & Warm White" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
         </div>
@@ -644,7 +553,7 @@
                 <div class="print-view">${data.lyric}</div>
             </td>
             <td>
-                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙, 분위기 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
+                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
                 <div class="print-view">${data.memo}</div>
             </td>
             <td class="action-col" style="text-align: center;">
@@ -745,10 +654,10 @@
         }
 
         const opt = {
-            margin:       [10, 10, 10, 10],
+            margin:       [6, 6, 6, 6],
             filename:     fileName,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: true },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak:    { mode: ['css', 'legacy'] }
         };
