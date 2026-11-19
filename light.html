@@ -303,21 +303,21 @@
             display: none;
         }
 
-        /* 🔥 PDF 캡처 모드 스타일 */
+        /* PDF 캡처 모드 스타일 (불필요한 빈 공간 없이 자연스럽게 페이지 나눔) */
         .pdf-export-mode {
             background: #FFFFFF !important;
             padding: 0 !important;
             margin: 0 !important;
             max-width: 100% !important;
             width: 100% !important;
-            gap: 5px !important;
+            gap: 6px !important;
         }
 
         .pdf-export-mode .card {
             box-shadow: none !important;
             border: 1px solid #8E8E93 !important;
             border-radius: 4px !important;
-            padding: 7px 9px !important;
+            padding: 8px 10px !important;
             background: #FFFFFF !important;
         }
 
@@ -339,6 +339,8 @@
             border-radius: 4px !important;
             background: #FFFFFF !important;
             padding: 4px 6px !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
         }
 
         .pdf-export-mode .input-group-box label {
@@ -366,6 +368,10 @@
             table-layout: fixed !important;
         }
 
+        .pdf-export-mode thead {
+            display: table-header-group !important;
+        }
+
         .pdf-export-mode th {
             font-size: 10.5px !important;
             padding: 4px 3px !important;
@@ -387,7 +393,7 @@
             padding: 1px 2px !important;
             background: #FFFFFF !important;
             font-size: 10.5px !important;
-            line-height: 1.28 !important;
+            line-height: 1.3 !important;
             width: 100% !important;
             white-space: pre-wrap !important;
             word-break: break-word !important;
@@ -395,11 +401,11 @@
             color: #1D1D1F !important;
         }
 
-        /* 🔥 브라우저 인쇄(@media print) 스타일 */
+        /* 브라우저 인쇄(@media print) 스타일 */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 6mm;
+                margin: 8mm;
             }
             body {
                 background: #FFFFFF !important;
@@ -409,13 +415,13 @@
             .container {
                 max-width: 100% !important;
                 width: 100% !important;
-                gap: 5px !important;
+                gap: 6px !important;
             }
             .card {
                 box-shadow: none !important;
                 border: 1px solid #8E8E93 !important;
                 border-radius: 4px !important;
-                padding: 7px 9px !important;
+                padding: 8px 10px !important;
                 background: #FFFFFF !important;
             }
             .header-row {
@@ -457,6 +463,9 @@
                 width: 100% !important;
                 table-layout: fixed !important;
             }
+            thead {
+                display: table-header-group !important;
+            }
             th {
                 font-size: 10.5px !important;
                 padding: 4px 3px !important;
@@ -475,7 +484,7 @@
                 padding: 1px 2px !important;
                 background: #FFFFFF !important;
                 font-size: 10.5px !important;
-                line-height: 1.28 !important;
+                line-height: 1.3 !important;
                 width: 100% !important;
                 white-space: pre-wrap !important;
                 word-break: break-word !important;
@@ -507,22 +516,22 @@
         <div class="info-grid">
             <div class="input-group-box">
                 <label>곡명</label>
-                <textarea id="song-title" class="input-field" placeholder="예: 첫사랑 (First Love)" oninput="resizeTextarea(this); autoSaveAll()"></textarea>
+                <textarea id="song-title" class="input-field" placeholder="예: 첫사랑 (First Love)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>팀명</label>
-                <textarea id="team-name" class="input-field" placeholder="예: 루시드 밴드" oninput="resizeTextarea(this); autoSaveAll()"></textarea>
+                <textarea id="team-name" class="input-field" placeholder="예: 루시드 밴드" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>의상 컨셉</label>
-                <textarea id="costume-concept" class="input-field" placeholder="예: 화이트 앤 데님 (색상 위주 작성)" oninput="resizeTextarea(this); autoSaveAll()"></textarea>
+                <textarea class="input-field" placeholder="예: 화이트 앤 데님 (색상 위주 작성)" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
             <div class="input-group-box">
                 <label>전체 메인 컨셉 & 메인 컬러</label>
-                <textarea id="main-concept" class="input-field" placeholder="예: Deep Blue & Warm White" oninput="resizeTextarea(this); autoSaveAll()"></textarea>
+                <textarea class="input-field" placeholder="예: Deep Blue & Warm White" oninput="resizeTextarea(this)"></textarea>
                 <div class="print-view"></div>
             </div>
         </div>
@@ -562,7 +571,7 @@
         </div>
 
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary" onclick="addRow(); autoSaveAll()">+ 섹션 추가</button>
+            <button type="button" class="btn btn-secondary" onclick="addRow()">+ 섹션 추가</button>
             <div class="export-btns">
                 <button type="button" class="btn btn-secondary" onclick="handleNativePrint()">인쇄 창 열기</button>
                 <button type="button" id="btn-download-pdf" class="btn btn-primary" onclick="downloadPDF()">PDF 파일 다운로드</button>
@@ -610,55 +619,6 @@
         }
     }
 
-    // 작성 중인 전체 내용 자동 저장
-    function autoSaveAll() {
-        const info = {
-            songTitle: document.getElementById('song-title').value,
-            teamName: document.getElementById('team-name').value,
-            costumeConcept: document.getElementById('costume-concept').value,
-            mainConcept: document.getElementById('main-concept').value
-        };
-
-        const rows = [];
-        document.querySelectorAll('#lighting-tbody tr:not(.example-row)').forEach(tr => {
-            const select = tr.querySelector('.form-select');
-            const customInput = tr.querySelector('.form-custom-input');
-            const textareas = tr.querySelectorAll('textarea');
-            const formVal = (select && select.style.display === 'none' && customInput)
-                ? (customInput.value || '직접 입력')
-                : (select ? select.value : 'Verse 1');
-
-            rows.push({
-                form: formVal,
-                lyric: textareas[0] ? textareas[0].value : '',
-                memo: textareas[1] ? textareas[1].value : ''
-            });
-        });
-
-        localStorage.setItem('lighting_draft_v1', JSON.stringify({ info, rows }));
-    }
-
-    // 저장된 초안 불러오기
-    function loadDraft() {
-        const raw = localStorage.getItem('lighting_draft_v1');
-        if (!raw) return false;
-        try {
-            const parsed = JSON.parse(raw);
-            if (parsed.info) {
-                document.getElementById('song-title').value = parsed.info.songTitle || '';
-                document.getElementById('team-name').value = parsed.info.teamName || '';
-                document.getElementById('costume-concept').value = parsed.info.costumeConcept || '';
-                document.getElementById('main-concept').value = parsed.info.mainConcept || '';
-            }
-            if (Array.isArray(parsed.rows) && parsed.rows.length > 0) {
-                const tbody = document.getElementById('lighting-tbody');
-                parsed.rows.forEach(r => tbody.appendChild(createRow(r)));
-                return true;
-            }
-        } catch (e) {}
-        return false;
-    }
-
     // 송폼 드롭다운 변경 시 '직접 입력' 처리
     function handleFormSelectChange(selectEl) {
         const td = selectEl.closest('td');
@@ -671,7 +631,6 @@
             customInput.value = '';
             customInput.focus();
         }
-        autoSaveAll();
     }
 
     // '직접 입력'에서 다시 드롭다운으로 복귀
@@ -683,7 +642,6 @@
         customWrapper.style.display = 'none';
         selectEl.style.display = 'block';
         selectEl.value = 'Verse 1';
-        autoSaveAll();
     }
 
     // 새로운 행 생성
@@ -701,17 +659,17 @@
                     ${options}
                 </select>
                 <div class="custom-form-wrapper" style="${isCustom ? 'display:flex;' : 'display:none;'}">
-                    <input type="text" class="input-field form-custom-input" placeholder="송폼 입력" oninput="autoSaveAll()" value="${isCustom && data.form !== '직접 입력' ? data.form : ''}">
+                    <input type="text" class="input-field form-custom-input" placeholder="송폼 입력" value="${isCustom && data.form !== '직접 입력' ? data.form : ''}">
                     <button type="button" class="btn-revert-select" onclick="revertToSelect(this)" title="목록에서 선택">↺</button>
                 </div>
                 <div class="print-view">${data.form}</div>
             </td>
             <td>
-                <textarea class="input-field" placeholder="가사 또는 파트 특징 입력" oninput="resizeTextarea(this); autoSaveAll()">${data.lyric}</textarea>
+                <textarea class="input-field" placeholder="가사 또는 파트 특징 입력" oninput="resizeTextarea(this)">${data.lyric}</textarea>
                 <div class="print-view">${data.lyric}</div>
             </td>
             <td>
-                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙 등 연출 구상" oninput="resizeTextarea(this); autoSaveAll()">${data.memo}</textarea>
+                <textarea class="input-field" placeholder="원하는 조명 톤, 무빙 등 연출 구상" oninput="resizeTextarea(this)">${data.memo}</textarea>
                 <div class="print-view">${data.memo}</div>
             </td>
             <td class="action-col" style="text-align: center;">
@@ -754,13 +712,11 @@
                 tbody.insertBefore(next, tr);
             }
         }
-        autoSaveAll();
     }
 
     function deleteRow(btn) {
         const row = btn.closest('tr');
         row.remove();
-        autoSaveAll();
     }
 
     // 입력값 동기화
@@ -830,7 +786,7 @@
         }
 
         const opt = {
-            margin:       [5, 5, 5, 5],
+            margin:       [6, 6, 6, 6],
             filename:     fileName,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, logging: false },
@@ -865,11 +821,8 @@
 
     window.onload = () => {
         loadExampleData();
-        const loaded = loadDraft();
-        if (!loaded) {
-            addRow();
-        }
         document.querySelectorAll('textarea').forEach(ta => resizeTextarea(ta));
+        addRow();
     };
 </script>
 
