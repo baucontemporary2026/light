@@ -43,7 +43,7 @@
             gap: 8px;
         }
 
-        /* 💡 카카오톡/인앱 브라우저 안내 배너 */
+        /* 카카오톡/인앱 브라우저 안내 배너 */
         .browser-notice {
             background: #FFF8E1;
             border: 1px solid #FFC107;
@@ -303,7 +303,7 @@
             display: none;
         }
 
-        /* PDF 캡처 모드 스타일 (불필요한 빈 공간 없이 자연스럽게 페이지 나눔) */
+        /* PDF 캡처 모드 스타일 */
         .pdf-export-mode {
             background: #FFFFFF !important;
             padding: 0 !important;
@@ -498,11 +498,11 @@
 
 <div class="container" id="capture-area">
     
-    <!-- 💡 카카오톡 / 인앱 브라우저 접속 안내 배너 -->
+    <!-- 카카오톡 / 인앱 브라우저 접속 안내 배너 -->
     <div class="browser-notice">
         <span class="icon">⚠️</span>
         <div class="browser-notice-content">
-            <strong>모바일(카카오톡·인라인) 브라우저 이용 시 주의사항</strong><br>
+            <strong>모바일(카카오톡·인앱) 브라우저 이용 시 주의사항</strong><br>
             PDF 다운로드가 원활하지 않거나 저장 안 됨 현상이 발생할 수 있습니다. 
             그럴 경우 우측 하단/상단 메뉴 버튼을 눌러 <strong>[다른 브라우저(사파리 / 크롬)로 열기]</strong>를 진행한 뒤 다운로드해 주세요!
         </div>
@@ -543,10 +543,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 18%;">송폼 (Song Form)</th>
-                        <th style="width: 40%;">가사 (주요 파트)</th>
-                        <th style="width: 42%;">희망하는 조명 연출</th>
-                        <th class="action-col" style="width: 0%; display: none;">순서/삭제</th>
+                        <th style="width: 17%;">송폼 (Song Form)</th>
+                        <th style="width: 36%;">가사 (주요 파트)</th>
+                        <th style="width: 39%;">희망하는 조명 연출</th>
+                        <th class="action-col" style="width: 8%; text-align: center;">관리</th>
                     </tr>
                 </thead>
                 <tbody id="lighting-tbody">
@@ -562,7 +562,7 @@
                         <td>
                             <textarea class="input-field" oninput="resizeTextarea(this); saveExampleData()">무대는 전체 암전 상태에서 보컬 쪽으로 웜화이트 핀조명(Spot)만 은은하게 켜짐. 몽환적인 느낌 유지를 위해 백라이트 딥블루 서서히 페이드인.</textarea>
                         </td>
-                        <td class="action-col" style="text-align: center; vertical-align: middle; display: none;">
+                        <td class="action-col" style="text-align: center; vertical-align: middle;">
                             <span style="font-size: 11px; color: var(--text-secondary);">고정</span>
                         </td>
                     </tr>
